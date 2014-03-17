@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}任务详情{% end %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="/static/css/task.css">
+{% end %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-md-8">
+        <!-- 面包屑-->
+      <ol class="breadcrumb">
+        <li><a href="/{{auth.project_id}}/task">{{auth.project_name}}</a></li>
+        <li class="active">查看任务</li>
+      </ol>
+        <!-- 任务详情-->
+        <div class="panel panel-{% if task.is_done %}success{% else %}primary{% end %}">
+            <div class="panel-heading">任务详情</div>
+            <div class="panel-body">
+                <div class="row lb pb5 mb5 task-header">
+                   <div class="col-md-1">
+                       <a href="/" class="task-icon">
+                           <i class="fa {{task.type_icon}} fa-3x"></i>
+                           <!--<img src="/static/img/no-photo.png" alt="" class="avatar img-thumbnail"/>-->
+                       </a>
+                   </div>
+                   <div class="col-md-{% if task.is_done %}10{% else %}9{% end %} title">
+                        <h4>{{ task.title }}</h4>
+                   </div>
+                   {% if not task.is_done %}
+                   <div class="col-md-1">
+                       <a class="btn btn-success btn-xs" href="/{{auth.project_id}}/task/{{task.id}}/solve">解决</a>
+                   </div>
+                   {% end %}
+                   <div class="col-md-1">
+                       <a class="btn btn-warning btn-xs" href="/{{auth.project_id}}/task/{{task.id}}/edit">更新</a>
+                   </div>
+                </div>
+                <div class="row task-text">
+                   <div class="col-md-2">
+                       <em>创建者</em>: <b>{{ task.creator_name }}</b>
+                   </div>
+                   <div class="col-md-8">
+                       <em>指派给</em>:&nbsp;{% for name in task.assigned_names %}<b>{{name}}&nbsp;&nbsp;</b>{% end %}
+                   </div>
+
+                </div>
+                <div class="row task-text">
+                    <div class="col-md-2"><em>类型</em>: <b>{{ task.type_name }}</b></div>
+                    <div class="col-md-2"><em>优先级</em>: <b>{{ task.priority_name }}</b></div>
+                    <div class="col-md-2"><em>状态</em>: <b>{{ task.status_name }}</b></div>
+                </div>
+                <div class="row task-text">
+                   <div class="col-md-4">
+                       <em>创建时间</em>: {{ task.created }}
+                   </div>
+                    <div class="col-md-4">
+                        <em>更新时间</em>: {{ task.updated }}
+                    </div>
+                </div>
+                <div class="row task-text">
+                    <div class="col-md-4">
+                        <em>期望时间</em>: {% if task.expires %}{{ task.expires.strftime('%Y-%m-%d') }}{% else %}未设置{% end %}
+                    </div>
+                </div>
+                <div class="mt10">
+                  {% if task.desc.strip() %}
+                  <pre>{% raw task.desc %}</pre>
+                  {% end %}
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span class="small">
+                    <a href="/{{auth.project_id}}/task/{{task.id}}/focus">{% if focus and focus.status %}已{% end %}关注</a>
+                </span>
+            </div>
+        </div>
+        <!-- 评论展示-->
+        {% if comments %}
+        <div class="panel panel-success">
+            <div class="panel-heading">任务评论 : {{len(comments)}}条</div>
+            <div class="panel-body">
+               {% for index, comment in enumerate(comments) %}
+                 <div class="cell">
+                     <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                         <tbody>
+                         <tr>
+                            <td width="48" valign="top" align="center" class="task-icon">
+                                <!--<img src="/static/img/bug.png" alt="" class="avatar img-thumbnail"/>-->
+                                <i class="fa {{comment.type_icon}} fa-3x"></i>
+                            </td>
+                            <td width="10"></td>
+                            <td width="auto" valign="top" align="left">
+
+                              <b class="u-name">{{comment.from_user_name}}</b>
+                              <em class="date ml10 mr10">{{comment.created}}</em>
+                              <em class="date small">{% if not index %}沙发{% else %}{{index+1}}楼{% end %}</em>
+                              <span class="pull-right">
+                                  <a href="#" data="{{comment.from_user_name}}" class="task-icon at mr5"><i class="fa fa-reply fa-1x"></i></a>
+                              </span>
+                              <div class="hei5"></div>
+                              <span class="content">
+                                  {% raw comment.content %}
+                              </span>
+                            </td>
+                         </tr>
+                         </tbody>
+                     </table>
+                 </div>
+               {% end %}
+            </div>
+        </div>
+        {% end %}
+        <div class="panel panel-info">
+            <div class="panel-heading">添加评论</div>
+            <div class="panel-body">
+                <form action="/{{auth.project_id}}/task/{{task.id}}/comment" method="post" id="comment-form">
+                    <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+                    <textarea class="form-control" name="content" id="content" rows="5" placeholder="技巧: @xxx 可以向某人发送消息, <a>url</a>可以插入URL">
+
+                    </textarea>
+                    <div class="hei5"></div>
+                    <button type="submit" class="btn btn-primary pull-right" id="publish">发布</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- 更新展示 -->
+    <div class="col-md-4">
+      <div class="panel panel-info">
+          <div class="panel-heading">更新记录</div>
+          <div class="panel-body">
+             {% for log in logs %}
+               <div class="log panel panel-warning">
+                <div class="panel-heading">{{log.updater_name}} 于 {{log.created}} 更新</div>
+                <div class="panel-body">
+                {% for l in log.desc_ %}
+                  <p>
+                     {{l[0]}}:
+                     {% if l[3] == 'update' %}
+                        <em>由</em> <b>{{l[1]}}</b> <em>更改为</em> <b>{{l[2]}}</b>
+                     {% end %}
+                     {% if l[3] == 'set' %}
+                        <em>设置为</em>&nbsp;<ins>{{l[2]}}</ins>
+                     {% end %}
+                     {% if l[3] == 'del' %}
+                        <em>删除了</em>&nbsp;<del>{{l[1]}}</del>
+                     {% end %}
+                  </p>
+                {% end %}
+                </div>
+                {% if log.note %}
+                <div class="panel-footer">
+                    <p>备注: <em>{{log.note}}</em></p>
+                </div>
+                {% end %}
+               </div>
+             {% end %}
+          </div>
+      </div>
+    </div>
+
+  </div>
+
+{% end %}
+
+{% block script %}
+<script>
+ var moveEnd = function(obj){
+	obj.focus();
+	var len = obj.value.length;
+	if (document.selection) {
+		var sel = obj.createTextRange();
+		sel.moveStart('character',len);
+		sel.collapse();
+		sel.select();
+	} else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
+		obj.selectionStart = obj.selectionEnd = len;
+	}
+}
+   $('.at').click(function(e){
+       e.preventDefault();
+       var name = '@' + $(this).attr('data')+' ';
+       var content = $('#content');
+       var old = content.val();
+       if(old.length > 0){
+           if(old != name) {
+               newc = old+'\n'+name;
+           }
+       }else{
+           newc = name;
+       }
+       content.focus();
+       content.val(newc);
+       moveEnd($('#content'));
+   })
+</script>
+{% end %}

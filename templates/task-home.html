@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}任务列表{% end %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="/static/css/task.css">
+{% end %}
+
+{% block content %}
+<div class="row">
+  <div class="container task-content">
+    <div class="col-md-9 box mr10">
+       <ul class="nav nav-pills">
+           <li {% if status=='unsolved' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=unsolved">未解决</a></li>
+           <li {% if status=='assigned' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=assigned">我的任务</a></li>
+           <li {% if status=='create' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=create">我创建</a></li>
+           <!--<li {% if status=='wait' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=wait">等待反馈</a></li>-->
+           <li {% if status=='solved' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=solved">已解决</a></li>
+           <!--<li {% if status=='closed' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=closed">已关闭</a></li>-->
+           <li {% if status=='all' %}class="active"{% end %}><a href="/{{cur_pro.project_id}}/task?s=all">全部任务</a></li>
+           <a href="/{{cur_pro.project_id}}/task/new" class="btn btn-success pull-right">新建任务</a>
+       </ul>
+       <hr/>
+       <div class="order-by">
+           排序:&nbsp;&nbsp;
+           <span class="label label-{% if order=='t' or order=='t_' %}info{% end %} mr10">
+               <a href="/{{cur_pro.project_id}}/task?s={{status}}&&o={% if order=='t'%}t_{% else %}t{% end %}&&p={{page}}">类型</a>
+           </span>
+           <span class="label label-{% if order=='p' or order=='p_' %}info{% end %} mr10">
+               <a href="/{{cur_pro.project_id}}/task?s={{status}}&&o={% if order=='p'%}p_{% else %}p{% end %}&&p={{page}}">优先级</a>
+           </span>
+           <span class="label label-{% if order=='s' or order=='s_' %}info{% end %}">
+               <a href="/{{cur_pro.project_id}}/task?s={{status}}&&o={% if order=='s'%}s_{% else %}s{% end %}&&p={{page}}">状态</a>
+           </span>
+           <span class="label label-{% if order=='c' or order=='c_' %}info{% end %}">
+               <a href="/{{cur_pro.project_id}}/task?s={{status}}&&o={% if order=='c'%}c_{% else %}c{% end %}&&p={{page}}">创建时间</a>
+           </span>
+       </div>
+       <div id="task-list">
+          {% for task in tasks %}
+          <div class="cell">
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tbody>
+            <tr>
+                <td width="48" valign="top" align="center" class="task-icon">
+                    <a href="/{{cur_pro.project_id}}/task?s={{status}}&&o={% if order=='t'%}t_{% else %}t{% end %}&&p={{page}}">
+                        <!--<img src="/static/img/bug.png" alt="" class="avatar img-thumbnail"/>-->
+                       <i class="fa {{task.type_icon}} fa-3x"></i>
+                    </a>
+                </td>
+                <td width="10"></td>
+                <td width="auto" valign="middle">
+                    <span class="task-title"><a href="/{{cur_pro.project_id}}/task/{{ task.id }}">{{ task.title }}</a></span>
+                    <div class="hei5"></div>
+                    <span class="small mr10"><em>类型</em>: <strong>{{ task.type_name }}</strong></span>
+                    <span class="small mr10"><em>优先级</em>: <strong>{{task.priority_name}}</strong></span>
+                    <span class="small mr10"><em>状态</em>: <strong>{{ task.status_name }}</strong></span>
+                    <span class="small mr10"><em>创建者</em>: <strong>{{ task.creator_name }}</strong></span>
+                    <span class="small mr10"><em>指派给</em>: <strong>{{ ', '.join(task.assigned_names) }}</strong></span>
+                </td>
+                <!--<td width="50" align="right" valign="middle">-->
+                   <!--<span class="badge">42</span>-->
+                <!--</td>-->
+            </tr>
+            </tdody>
+          </table>
+          </div>
+          {% end %}
+       </div>
+       {% if paginator %}
+        {% set base_url='/'+str(cur_pro.project_id)+'/task?s='+status+'&&o='+order+'&&' %}
+        {% include 'paginator.html' %}
+       {% else %}
+        <div class="task-footer">
+
+        </div>
+       {% end %}
+    </div>
+    <div class="col-md-2 box objects">
+
+      <ul class="nav nav-pills nav-stacked">
+          {% for pro in pros %}
+          <li {% if pro.id==cur_pro.id %}class="active"{% end %}><a href="/{{pro.project_id}}/task">{{pro.project_name}}</a></li>
+          {% end %}
+      </ul>
+      {% if unread_num %}
+      <div class="panel panel-info mt20">
+          <div class="panel-heading">提示</div>
+          <div class="panel-body">
+              <p><a href="/message">你有{{unread_num}}条未读的消息</a></p>
+          </div>
+      </div>
+      {% end %}
+    </div>
+  </div>
+</div>
+{% end %}

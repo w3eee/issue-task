@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %} {{auth.project_name}}: 新建任务 {% end %}
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="/static/css/token-input-facebook.css">
+<link rel="stylesheet" type="text/css" href="/static/css/task.css">
+{% end %}
+
+{% block content %}
+  <!-- 面包屑 -->
+  <ol class="breadcrumb">
+    <li><a href="/{{auth.project_id}}/task">{{auth.project_name}}</a></li>
+    {% if not update %}
+    <li class="active">新建任务</li>
+    {% else %}
+    <li><a href="/{{auth.project_id}}/task/{{task.get('id')}}">{{task.get('title')[:20]}}...</a></li>
+    <li class="active">编辑任务</li>
+    {% end %}
+  </ol>
+  <div class="panel panel-info">
+      <div class="panel-heading">任务详情</div>
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" method="post" id="task-form">
+            <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+            <div class="form-group {% if 'title' in errors %}has-error{% end %}">
+                <label for="title" class="col-sm-offset-2 col-sm-1 control-label">标题</label>
+                <div class="col-sm-7">
+                  <input type="text" class="form-control" id="title" name="title" placeholder="标题"
+                          required value="{%if task.get('title')%}{{task.get('title')}}{% end %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <!-- type -->
+                <label for="type" class="col-sm-offset-2 col-sm-1 control-label">类型</label>
+                <div class="col-sm-2">
+                <select id="type" name="type" class="form-control">
+                    {% for t in types %}
+                      <option value="{{ t[0] }}" {%if t[0]==task.get('type')%}selected{% end %}>{{t[1]}}</option>
+                    {% end %}
+                </select>
+                </div>
+                <!-- status -->
+                <label for="status" class="col-sm-1 control-label">状态</label>
+                <div class="col-sm-2">
+                <select id="status" name="status" class="form-control">
+                    {% for s in statuses %}
+                        <option value="{{ s[0] }}" {%if s[0]==task.get('status')%}selected{% end %}>{{s[1]}}</option>
+                    {% end %}
+                </select>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label for="priority" class="col-sm-offset-2 col-md-1 control-label">优先级</label>
+                <div class="col-md-2">
+                <select id="priority" name="priority" class="form-control">
+                  {% for s in priorities %}
+                    <option value="{{ s[0] }}" {%if s[0]==task.get('priority')%}selected{% end %}>{{s[1]}}</option>
+                  {% end %}
+                </select>
+                </div>
+                <label for="expires" class="col-md-1 control-label">期望时间</label>
+                <div class="col-md-2">
+                   <input class="form-control" type="date" name="expires" id="expires"
+                          placeholder="格式: xxxx-xx-xx"
+                          value="{% if task.get('expires') %}{{task.get('expires')[:10]}}{% end %}"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="assigneds" class="col-sm-offset-2 col-sm-1 control-label">指派用户</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="assigneds" placeholder="" id="assigneds"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="desc" class="col-sm-offset-2 col-sm-1 control-label">描述</label>
+                <div class="col-sm-7">
+                  <textarea class="form-control" rows="5" id="desc" name="desc">
+                      {% if task.get('desc')%}{{task['desc']}}{% end %}
+                  </textarea>
+                </div>
+            </div>
+            {% if update %}
+            <div class="form-group">
+                <label for="note" class="col-sm-offset-2 col-sm-1 control-label">更新备注</label>
+                <div class="col-sm-7">
+                  <textarea class="form-control" rows="3" id="note" name="note"></textarea>
+                </div>
+            </div>
+            {% end %}
+            <input type="hidden" name="continue" id="continue" value="0" />
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-7">
+                {% if update %}
+                <button type="submit" class="btn btn-primary mr10" id="update">更新任务</button>
+                {% else %}
+                <button type="submit" class="btn btn-primary mr10" id="publish">发布</button>
+                <button class="btn btn-primary" id="publish-continue">发布并继续</button>
+                {% end %}
+                </div>
+            </div>
+        </form>
+      </div>
+      {% if errors %}
+      <div class="panel-footer">
+        {% for error in errors %}
+           <span class="label label-danger">{{ errors[error][0] }}</span>
+        {% end %}
+      </div>
+      {% end %}
+  </div>
+{% end %}
+
+{% block script %}
+<script src="/static/js/underscore-min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.tokeninput.js"></script>
+<script>
+$(function(){
+   var users = {% raw json_users %};
+   $('#publish-continue').click(function(e){
+        e.preventDefault();
+        $('#continue').val(1);
+        $('#task-form').submit();
+        return false;
+   });
+   $('#assigneds').tokenInput(users, {
+       theme: "facebook",
+       prePopulate: {% raw task['assigneds'] %}
+   })
+
+})
+
+</script>
+{% end %}
+

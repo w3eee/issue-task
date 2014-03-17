@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}管理平台{% end %}
+
+{% block content %}
+  <div class="row">
+      <div class="col-md-4">
+          <div class="panel panel-primary">
+              <div class="panel-heading">统计</div>
+              <div class="panel-body">
+                {% for p in ps %}
+                  <div class="panel panel-info">
+                      <div class="panel-heading"><a href="/{{p.id}}/task">{{p.name}}</a></div>
+                      <div class="panel-body">
+                          {% for user in p.users %}
+                            <span class="label label-info">{{user.name}}</span>
+                          {% end %}
+                      </div>
+                      {% if p.note %}
+                      <div class="panel-footer">{{p.note}}</div>
+                      {% end %}
+                  </div>
+
+                {% end %}
+              </div>
+          </div>
+      </div>
+      <div class="col-md-8">
+          <div class="panel panel-success">
+              <div class="panel-heading">管理</div>
+              <div class="panel-body">
+                  <div class="panel panel-info">
+                      <div class="panel-heading">添加项目</div>
+                      <div class="panel-body">
+                          <form class="form-horizontal" role="form" id="project-form" method="post" action="/manager/project">
+                            <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-10">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="项目名称">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="status" class="col-sm-2 control-label">类型</label>
+                                <div class="col-sm-10">
+                                    <select id="status" name="status" class="form-control">
+                                        <option value="1">公开项目</option>
+                                        <option value="2">私密项目</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="note" class="col-sm-2 control-label">描述</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" rows="5" id="note" name="note">
+                                    </textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-default">提交</button>
+                                </div>
+                            </div>
+                          </form>
+                      </div>
+                  </div>
+
+                  <div class="panel panel-info">
+                      <div class="panel-heading">添加成员</div>
+                      <div class="panel-body">
+                          <form class="form-horizontal" role="form" id="auth-form" method="post" action="/manager/auth">
+                            <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+                            <div class="form-group">
+                                <label for="project" class="col-sm-2 control-label">选择项目</label>
+                                <div class="col-sm-10">
+                                    <select id="project" name="project" class="form-control">
+                                     {% for p in ps %}
+                                        <option value="{{p.id}}-{{p.name}}">{{p.name}}</option>
+                                     {% end %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="user" class="col-sm-2 control-label">选择用户</label>
+                                <div class="col-sm-10">
+                                    <select id="user" name="user" class="form-control">
+                                    {% for u in users %}
+                                        <option value="{{u.id}}-{{u.name}}">{{u.name}}</option>
+                                    {% end %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-default">添加</button>
+                                </div>
+                            </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>  <!-- body -->
+          </div>
+      </div>
+  </div>
+{% end %}

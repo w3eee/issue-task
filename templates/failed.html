@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %} 限制的访问{% end %}
+{% block content %}
+  <div class="panel panel-info">
+     <div class="panel-heading">提示</div>
+      <div class="panel-body">
+         {% for m in messages %}
+            <p>{{m}}</p>
+         {% end %}
+      </div>
+  </div>
+{% end %}

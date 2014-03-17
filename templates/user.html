@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+   <div class="panel-info panel">
+       <div class="panel-heading">更改资料</div>
+       <div class="panel-body">
+        <form class="form-horizontal" role="form" method="post" id="user-form">
+            <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+            <div class="form-group {% if 'email' in errors %}has-error{% end %}">
+                <label for="email" class="col-sm-2 control-label">邮箱</label>
+                <div class="col-sm-6">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{user['email']}}">
+                </div>
+            </div>
+            <div class="form-group {% if 'name' in errors %}has-error{% end %}">
+                <label for="name" class="col-sm-2 control-label">姓名</label>
+                <div class="col-sm-6">
+                <input type="text" class="form-control" id="name" name="name" placeholder="姓名" value="{{user['name']}}">
+                </div>
+            </div>
+            <div class="form-group {% if 'avatar' in errors %}has-error{% end %}">
+                <label for="avatar" class="col-sm-2 control-label">头像</label>
+                <div class="col-sm-6">
+                <input type="text" class="form-control" id="avatar" name="avatar" placeholder="在线头像链接" value="{{user['avatar']}}">
+                </div>
+            </div>
+            <div class="form-group {% if 'old_pwd' in errors %}has-error{% end %}">
+                <label for="old_passwd" class="col-sm-2 control-label">旧密码</label>
+                <div class="col-sm-6">
+                <input type="password" class="form-control" id="old_passwd" name="old_pwd" placeholder="旧密码">
+                </div>
+            </div>
+            <div class="form-group {% if 'new_pwd' in errors %}has-error{% end %}">
+                <label for="new_passwd" class="col-sm-2 control-label">新密码</label>
+                <div class="col-sm-6">
+                <input type="password" class="form-control" id="new_passwd" name="new_pwd" placeholder="新密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default btn-primary">提交</button>
+                </div>
+            </div>
+        </form>
+       </div>
+      {% if errors %}
+      <div class="panel-footer">
+        {% for error in errors %}
+           <span class="label label-danger">{{ errors[error][0] }}</span>
+        {% end %}
+      </div>
+      {% end %}
+   </div>
+</div>
+
+{% end %}

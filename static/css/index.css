@@ -1,0 +1,28 @@
+.fwb {
+    font-weight: bold;
+}
+.mr5 {
+    margin-right: 5px;
+}
+.msg-task {
+    text-decoration: underline;
+font-size: 0.8em;
+/*font-weight: bold;*/
+}
+.msg-task a {
+    /*color: #ccc;*/
+}
+.msg-date {
+    margin-left: 10px;
+color: #918D8D;
+}
+.msg-content em {
+color: #747171;
+}
+.msg-desc {
+background: #e2e2e2;
+margin-left: 10px;
+}
+.unread table {
+    background: #e2e2e2;
+}

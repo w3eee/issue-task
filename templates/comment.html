@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+
+   <div class="col-md-7">
+       <a href="http://www.baidu.com" target="_blank">www.baidu.com</a>
+               <!-- 面包屑-->
+   <ol class="breadcrumb">
+      <li><a href="/{{auth.project_id}}/task">{{auth.project_name}}</a></li>
+      <li><a href="/{{auth.project_id}}/task/{{task.id}}">{{task.title}}</a></li>
+      <li class="active">添加评论</li>
+   </ol>
+    <div class="panel panel-info">
+        <div class="panel-heading">添加评论</div>
+            <div class="panel-body">
+                <form action="/{{auth.project_id}}/task/{{task.id}}/comment" method="post" id="comment-form">
+                    <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+                    <textarea class="form-control" name="content" id="content" rows="5"></textarea>
+                    <div class="hei5"></div>
+                    <button type="submit" class="btn btn-primary pull-right" id="publish">发布</button>
+                </form>
+            </div>
+            <div class="panel-footer">
+               {% for error in errors %}
+                <span class="label label-danger">{{errors[error][0]}}</span>
+               {% end %}
+            </div>
+    </div>
+  </div>
+</div>
+
+{% end %}

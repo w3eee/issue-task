@@ -1,0 +1,52 @@
+
+.task-content .col-md-2 {
+    width: 245px;
+}
+
+.task-content .col-md-9 {
+width: 880px;
+}
+.order-by {
+/*margin-top: -15px;*/
+/*font-size: 12px;*/
+color: gray;
+}
+/*.order-by a {*/
+    /*color: white;*/
+/*}*/
+.task-title {
+font-size: 1.3em;
+font-size: 16px;
+line-height: 130%;
+text-shadow: 0px 1px 0px #fff;
+word-wrap: break-word;
+word-break: break-all;
+}
+.task-header .title {
+    margin-left: -15px;
+}
+.task-text {
+    line-height: 25px;
+margin-bottom: 5px;
+}
+.log {
+    font-size: 12px;
+}
+.log .panel-heading,
+.log .panel-body,
+.log .panel-footer {
+    padding: 7px;
+}
+.log p{
+  margin-bottom: 3px;
+}
+.task-icon,
+.task-icon a {
+    color: #333;
+}
+.date {
+   color: #ccc;
+}
+.content {
+    font-size: 1.12em;
+}

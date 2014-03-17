@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}任务管理: 首页{% end %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+{% end %}
+
+{% block content %}
+  <div class="row box">
+      <div class="col-md-9">
+         <ul class="nav nav-pills">
+             <li {% if mode=='message' %}class="active"{% end %}>
+                <a href="/message">消息</a>
+             </li>
+             <li {% if mode=='focus' %}class="active"{% end %}><a href="/focus/task">关注</a></li>
+             <li {% if mode=='user_task' %}class="active"{% end %}><a href="/user_task">我的任务</a></li>
+         </ul>
+         <hr/>
+         <div class="msg-content">
+           {% if mode=='message' %}
+             {% for msg in datas %}
+               <div class="cell {% if msg.status==msg._status_unread %}unread{% end %}" id="{{msg.id}}">
+                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tbody><tr>
+                        <td width="48" valign="top" align="center" class="task-icon">
+                            <i class="fa {{msg.icon}} fa-3x"></i>
+                            <!--<a href="/"><img src="/static/img/no-photo.png" alt="" class="avatar img-thumbnail"></a>-->
+                        </td>
+                        <td width="10"></td>
+                        <td valign="middle">
+                          {% if msg.type == msg._type_assigned %}
+                            <!-- 指派任务消息 -->
+                            <span class="fwb mr5">{{msg.from_user_name}}</span><em>指派了任务</em>
+                            <span class="msg-task"><a href="/{{msg.project_id}}/task/{{msg.task_id}}">{{msg.task_title}}</a></span>
+                            <em>给你</em> <span class="msg-date">{{msg.created}}</span>
+                            <a class="del btn btn-default btn-xs pull-right" href="/message/{{msg.id}}/del">删除</a>
+                            <div class="hei5"></div>
+                            <em>项目组:</em>
+                            <span><a href="/{{msg.project_id}}/task">{{msg.project_name}}</a></span>
+                          {% end %}
+                          {% if msg.type == msg._type_apply %}
+                            <span class="fwb mr5">{{msg.from_user_name}}</span> <em>在任务:</em>
+                            <span class="msg-task"><a href="/{{msg.project_id}}/task/{{msg.task_id}}">{{msg.task_title}}</a></span>
+                            <em>中回复了你</em> <span class="msg-date">{{msg.created}}</span>
+                            <a class="del btn btn-default btn-xs pull-right" href="/message/{{msg.id}}/del">删除</a>
+                            <div class="hei5"></div>
+                            <em>项目组:</em>
+                            <span><a href="/{{msg.project_id}}/task">{{msg.project_name}}</a></span>
+                            <div class="hei5"></div>
+                            <span class="msg-desc">{% raw msg.content %}</span>
+                          {% end %}
+                          {% if msg.type == msg._type_user %}
+                            <span class="fwb mr5">{{msg.from_user_name}}</span> <em>在任务:</em>
+                            <span class="msg-task"><a href="/{{msg.project_id}}/task/{{msg.task_id}}">{{msg.task_title}}</a></span>
+                            <em>中@了你</em>
+                            <span class="msg-date">{{msg.created}}</span>
+                            <a class="del btn btn-default btn-xs pull-right" href="/message/{{msg.id}}/del">删除</a>
+                            <div class="hei5"></div>
+                            <em>项目组:</em>
+                            <span><a href="/{{msg.project_id}}/task">{{msg.project_name}}</a></span>
+                            <div class="hei5"></div>
+                            <span class="msg-desc">{% raw msg.content %}</span>
+                          {% end %}
+                          {% if msg.type == msg._type_edit %}
+                            <span class="fwb mr5">{{msg.from_user_name}}</span> <em>更新了你的任务:</em>
+                            <span class="msg-task"><a href="/{{msg.project_id}}/task/{{msg.task_id}}">{{msg.task_title}}</a></span>
+                            <span class="msg-date">{{msg.created}}</span>
+                            <a class="del btn btn-default btn-xs pull-right" href="/message/{{msg.id}}/del">删除</a>
+                            <div class="hei5"></div>
+                            <em>项目组:</em>
+                            <span><a href="/{{msg.project_id}}/task">{{msg.project_name}}</a></span>
+                          {% end %}
+                          {% if msg.type == msg._type_sys %}
+                            <span class="fwb mr5">系统消息:</span><span class="msg-date">{{msg.created}}</span>
+                            <a class="del btn btn-default btn-xs pull-right" href="/message/{{msg.id}}/del">删除</a>
+                            <div class="hei5"></div>
+                            <span class="msg-desc">{{msg.content}}</span>
+                          {% end %}
+                        </td>
+                    </tr></tbody>
+                </table>
+               </div>
+             {% end %}
+          {% end %}
+          {% if mode=='focus' %}
+           {% for foc in datas %}
+            <div class="cell">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="48" valign="top" align="center">
+                           <i class="fa {{foc.task.type_icon}} fa-3x"></i>
+                        </td>
+                        <td width="10"></td>
+                        <td width="auto" valign="middle">
+                            <span class="task-title"><a href="/{{foc.project_id}}/task/{{ foc.task.id }}">{{ foc.task.title }}</a></span>
+                            <div class="hei5"></div>
+                            <span class="small mr10"><em>类型</em>: <strong>{{ foc.task.type_name }}</strong></span>
+                            <span class="small mr10"><em>优先级</em>: <strong>{{foc.task.priority_name}}</strong></span>
+                            <span class="small mr10"><em>状态</em>: <strong>{{ foc.task.status_name }}</strong></span>
+                            <span class="small mr10"><em>创建者</em>: <strong>{{ foc.task.creator_name }}</strong></span>
+                            <span class="small mr10"><em>指派给</em>: <strong>{{ ', '.join(foc.task.assigned_names) }}</strong></span>
+                        </td>
+                <!--<td width="50" align="right" valign="middle">-->
+                   <!--<span class="badge">42</span>-->
+                <!--</td>-->
+                    </tr>
+                </tdody>
+                </table>
+          </div>
+         {% end %}
+        {% end %}
+         {% if mode=='user_task' %}
+           {% for task in datas %}
+            <div class="cell">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="48" valign="top" align="center">
+                           <i class="fa {{task.type_icon}} fa-3x"></i>
+                        </td>
+                        <td width="10"></td>
+                        <td width="auto" valign="middle">
+                            <span class="task-title"><a href="/{{task.project_id}}/task/{{ task.id }}">{{ task.title }}</a></span>
+                            <div class="hei5"></div>
+                            <span class="small mr10"><em>类型</em>: <strong>{{ task.type_name }}</strong></span>
+                            <span class="small mr10"><em>优先级</em>: <strong>{{task.priority_name}}</strong></span>
+                            <span class="small mr10"><em>状态</em>: <strong>{{ task.status_name }}</strong></span>
+                            <span class="small mr10"><em>创建者</em>: <strong>{{ task.creator_name }}</strong></span>
+                            <span class="small mr10"><em>指派给</em>: <strong>{{ ', '.join(task.assigned_names) }}</strong></span>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+          </div>
+         {% end %}
+        {% end %}
+         </div>
+        {% if paginator %}
+         {% set base_url='/message?' if mode=='message' else '/focus/task?' %}
+         {% include 'paginator.html' %}
+        {% end %}
+      </div>
+      <div class="col-md-3">
+         <div class="panel panel-info">
+             <div class="panel-heading">
+                 我的项目组
+             </div>
+             <div class="panel-body">
+               {% for auth in auths %}
+                <span class=""><a href="/{{auth.project_id}}/task">{{auth.project_name}}</a></span>
+                <div class="hei5"></div>
+               {% end %}
+             </div>
+         </div>
+      </div>
+  </div>
+{% end %}
+
+{% block script %}
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+<script>
+    $('.del').click(function(e){
+        e.preventDefault();
+        var url = $(this).attr('href');
+        var data = {};
+        data._xsrf = $.cookie("_xsrf");
+        $.post(
+            url,
+            data,
+            function(resp){
+                if (resp.status){
+                    $('#'+resp.msg_id).fadeOut('slow');
+                    $('#'+resp.msg_id).remove();
+                }
+            }
+        )
+    })
+</script>
+{% end %}

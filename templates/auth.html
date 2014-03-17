@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="panel panel-info">
+        {% if mode == 'register' %}
+           <div class="panel-heading">用户注册</div>
+           <div class="panel-body">
+              <form class="form-horizontal" role="form" id="register-form" method="post">
+              <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+                <div class="form-group {% if 'email' in errors %}has-error{% end %}">
+                    <label for="email" class="col-sm-1 control-label">邮箱</label>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="注册邮箱">
+                    </div>
+                </div>
+                <div class="form-group {% if 'name' in errors %}has-error{% end %}">
+                    <label for="name" class="col-sm-1 control-label">名字</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="真实姓名">
+                    </div>
+                </div>
+                <div class="form-group {% if 'pwd' in errors %}has-error{% end %}">
+                    <label for="pwd" class="col-sm-1 control-label">密码</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="pwd" name="pwd" placeholder="密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-4">
+                        <button type="submit" class="btn btn-primary">注册</button>
+                    </div>
+                </div>
+              </form>
+           </div>
+        {% else %}
+           <div class="panel-heading">登录系统</div>
+           <div class="panel-body">
+              <form class="form-horizontal" role="form" id="login-form" method="post">
+               <div class="hide xsrf">{% raw xsrf_form_html() %}</div>
+                <div class="form-group {% if 'account' in errors %}has-error{% end %}">
+                    <label for="account" class="col-sm-1 control-label">登录名</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="account" name="account" placeholder="邮箱或者名字">
+                    </div>
+                </div>
+                <div class="form-group {% if 'pwd' in errors %}has-error{% end %}">
+                    <label for="lpwd" class="col-sm-1 control-label">密码</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="lpwd" name="pwd" placeholder="密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-4">
+                        <button type="submit" class="btn btn-primary">登录</button>
+                    </div>
+                </div>
+              </form>
+           </div>
+        {% end %}
+        {% if errors %}
+        <div class="panel-footer">
+          {% for error in errors %}
+            <span class="label label-danger">{{ errors[error][0] }}</span>
+          {% end %}
+        </div>
+        {% end %}
+        </div>
+    </div>
+{% end %}

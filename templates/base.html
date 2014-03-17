@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{% block title %}华强百应-任务管理系统{% end %}</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/jasny-bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/font-awesome-4.0.3/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+	{% block extra_head %}{% end %}
+	<style type="text/css">
+		{% block extra_css %}{% end %}
+	</style>
+</head>
+<body>
+
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand tyl mr30" href="/">
+            华强百应&nbsp;&nbsp;<span class="small" style="font-size: 12px;">精益求精，止于至善</span>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li {% if mode in ['message', 'focus', 'user_task']%}class="active"{% end %}><a href="/">我的主页</a></li>
+            <li {% if mode=='task' %}class="active"{% end %}><a href="/task/home">任务管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <!--<li><a href="/readme">帮助</a></li>-->
+          {% if not handler.user %}
+          <li><a href="/register">注册</a></li>
+          <li><a href="/login">登录</a></li>
+          {% else %}
+            {% if handler.user.admin %}
+            <li {% if mode=='sys' %}class="active"{% end %}><a href="/manager">系统管理</a></li>
+            {% end %}
+            <li><a href="/user/edit">{{ handler.user.name }}</a></li>
+            <li><a href="/user/edit">设置</a></li>
+            <li><a href="/logout">注销</a></li>
+          {% end %}
+        </ul>
+      </div>
+      {% block nav-inside %}{% end %}
+    </div>
+  </div>
+
+  <div class="messages">
+    {% for m in messages %}
+      <div class="alert alert-info">{{m}}</div>
+    {% end %}
+  </div>
+
+  <div class="container container-fix">
+	{% block content %}
+	{% end %}
+  </div>
+
+{% block footer %}
+  <footer class="footer">
+    <div class="container">
+    </div>
+  </footer>
+{% end %}
+  {% block append %}{% end %}
+	<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/jasny-bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/ajaxupload-min.js"></script>
+  <script>
+    $('.messages').fadeOut(5000);
+  </script>
+	{% block script %}{% end %}
+  </body>
+</html>

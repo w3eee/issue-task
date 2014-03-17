@@ -1,0 +1,23 @@
+<!-- need: paginator, page, base_url -->
+
+<ul class="pagination pull-right">
+{% if paginator.prev %}
+   <li><a class="page-nav" href="{{base_url}}p={{paginator.prev}}">«</a></li>
+{% else %}
+   <li class="disabled"><a class="page-nav" href="#" rel="">«</a></li>
+{% end %}
+
+{% for p in paginator.pages %}
+   {% if p == page %}
+      <li class="active"><a class="page-nav" href="#" rel="">{{ p }}</a></li>
+   {% else %}
+      <li ><a class="page-nav" href="{{ base_url }}p={{p}}" rel="{{p}}">{{ p }}</a></li>
+   {% end %}
+{% end %}
+
+{% if paginator.next == None %}
+  <li class="disabled"><a class="page-nav" href="#" rel="">»</a></li>
+{% else %}
+  <li ><a class="page-nav" href="{{ base_url }}p={{paginator.next}}" rel="{{ paginator.next }}">»</a></li>
+{% end %}
+</ul>
